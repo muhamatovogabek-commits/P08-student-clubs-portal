@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CampusClubs Portal — P08 | Cyber University DIK1305</title>
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <div class="brand-logo" aria-hidden="true">CC</div>
+        <div>
+          <div class="brand-title">
+            CampusClubs Portal
+            <span class="course-pill">DIK1305 • P08</span>
+          </div>
+          <p class="brand-subtitle">Cyber University — Talabalar klublari va tadbirlar portali</p>
+        </div>
+      </div>
+
+      <div class="topbar-controls">
+        <div class="role-switcher" id="roleSwitcher" role="group" aria-label="Foydalanuvchi roli almashtirgichi"></div>
+        <button type="button" id="resetDemoBtn" class="btn btn-ghost btn-sm" title="Barcha o'zgarishlarni boshlang'ich holatga qaytarish">
+          ↺ Demo ma’lumotlarni tiklash
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="main-nav" aria-label="Asosiy ekranlar">
+    <div class="container nav-inner" id="screenNav">
+      <button type="button" class="nav-tab active" data-screen="catalog">
+        <span class="nav-step">1</span> Ochiq katalog
+      </button>
+      <button type="button" class="nav-tab" data-screen="register">
+        <span class="nav-step">2</span> Yozilish va A’zolik
+      </button>
+      <button type="button" class="nav-tab" data-screen="dashboard">
+        <span class="nav-step">3</span> Natija va Talaba kabineti
+        <span class="nav-badge hidden" id="navOfferBadge">0</span>
+      </button>
+      <button type="button" class="nav-tab" data-screen="leader">
+        <span class="nav-step">4</span> Klub rahbari paneli
+        <span class="nav-badge hidden" id="navPendingBadge">0</span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="container main-content">
+    <!-- Aktiv foydalanuvchi kontekst qatori -->
+    <section class="user-strip" id="activeUserStrip" aria-live="polite"></section>
+
+    <!-- Global bildirishnoma (QABUL / RAD ETISH / KUTISH / OFFERED) -->
+    <section id="resultBanner" class="result-banner hidden" role="status" aria-live="assertive"></section>
+
+    <!-- EKRAN 1: Ochiq katalog -->
+    <section id="screen-catalog" class="screen active" aria-labelledby="catalogHeading">
+      <div class="section-header">
+        <div>
+          <h1 id="catalogHeading">Talabalar klublari va yaqin tadbirlar</h1>
+          <p class="muted">Cyber University faol klublari bilan tanishing va ochiq tadbirlarga o‘rin band qiling.</p>
+        </div>
+        <div class="kpi-strip" id="catalogKpis"></div>
+      </div>
+
+      <h2 class="subsection-title">Faol klublar</h2>
+      <div class="grid-2" id="clubsGrid"></div>
+
+      <div class="subsection-row">
+        <h2 class="subsection-title">Yaqin tadbirlar</h2>
+        <span class="hint-text">Sig‘im real vaqtda yangilanadi (localStorage)</span>
+      </div>
+      <div class="grid-3" id="eventsCatalogGrid"></div>
+    </section>
+
+    <!-- EKRAN 2: Tadbirga yozilish / A'zolik shakli -->
+    <section id="screen-register" class="screen" aria-labelledby="registerHeading">
+      <div class="section-header">
+        <div>
+          <h1 id="registerHeading">Tadbirga yozilish va klubga a’zolik</h1>
+          <p class="muted">Bo‘sh o‘rinlar holatini tekshiring, tadbirga yoziling yoki klub a’zoligiga ariza yuboring.</p>
+        </div>
+      </div>
+
+      <div class="grid-2 align-start">
+        <!-- Tadbirga yozilish kartasi -->
+        <article class="card">
+          <div class="card-header">
+            <h2>Tadbirga yozilish</h2>
+            <span class="badge badge-info">Sig‘im nazorati</span>
+          </div>
+          <div class="form-group">
+            <label for="eventSelect">Tadbirni tanlang</label>
+            <select id="eventSelect" class="input"></select>
+          </div>
+          <div id="selectedEventPreview" class="event-preview-box"></div>
+        </article>
+
+        <!-- Klubga a'zolik shakli -->
+        <article class="card">
+          <div class="card-header">
+            <h2>Klubga a’zolik arizasi</h2>
+            <span class="badge badge-neutral">Rahbar tasdig‘i</span>
+          </div>
+          <form id="membershipForm" class="stack-md">
+            <div class="form-group">
+              <label for="clubSelect">Klubni tanlang</label>
+              <select id="clubSelect" class="input" required></select>
+            </div>
+            <div class="form-group">
+              <label for="motivationInput">Qisqacha motivatsiya / qiziqishingiz</label>
+              <textarea
+                id="motivationInput"
+                class="input textarea"
+                rows="4"
+                placeholder="Masalan: CTF musobaqalarida qatnashish va amaliy loyihalar yaratishni xohlayman..."
+                required
+              ></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" id="submitMembershipBtn">
+              A’zolik arizasini yuborish
+            </button>
+          </form>
+        </article>
+      </div>
+    </section>
+
+    <!-- EKRAN 3: Natija va Talaba kabineti -->
+    <section id="screen-dashboard" class="screen" aria-labelledby="dashboardHeading">
+      <div class="section-header">
+        <div>
+          <h1 id="dashboardHeading">Talaba kabineti va natijalar</h1>
+          <p class="muted">Bandlangan tadbirlar, kutish ro‘yxati takliflari, klub a’zoligi va ishtirok tarixi.</p>
+        </div>
+      </div>
+
+      <!-- Oxirgi amal natijasi (Modal/Banner ko'rinishida) -->
+      <div id="dashboardResultCard" class="stack-md"></div>
+
+      <!-- Joy bo'shadi takliflari (OFFERED) -->
+      <div id="offersSection" class="stack-md"></div>
+
+      <div class="grid-2 align-start">
+        <article class="card">
+          <div class="card-header">
+            <h2>Bandlangan tadbirlarim</h2>
+            <span class="badge badge-success" id="confirmedCountBadge">0</span>
+          </div>
+          <div id="myConfirmedEvents" class="stack-sm"></div>
+        </article>
+
+        <article class="card">
+          <div class="card-header">
+            <h2>Kutish ro‘yxati</h2>
+            <span class="badge badge-warning" id="waitlistCountBadge">0</span>
+          </div>
+          <div id="myWaitlistEvents" class="stack-sm"></div>
+        </article>
+      </div>
+
+      <div class="grid-2 align-start mt-lg">
+        <article class="card">
+          <div class="card-header">
+            <h2>Klub a’zoliklarim</h2>
+          </div>
+          <div id="myMembershipsList" class="stack-sm"></div>
+        </article>
+
+        <article class="card">
+          <div class="card-header">
+            <h2>Ishtirok tarixi (Davomat)</h2>
+          </div>
+          <div id="myHistoryList" class="stack-sm"></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- EKRAN 4: Klub rahbari paneli -->
+    <section id="screen-leader" class="screen" aria-labelledby="leaderHeading">
+      <div class="section-header">
+        <div>
+          <h1 id="leaderHeading">Klub rahbari boshqaruv paneli</h1>
+          <p class="muted">A’zolik arizalarini ko‘rib chiqing, tadbir sig‘imini sozlang va davomatni belgilang.</p>
+        </div>
+      </div>
+
+      <div id="leaderAccessNotice" class="hidden"></div>
+
+      <div id="leaderPanelBody" class="stack-lg">
+        <!-- A'zolik arizalari -->
+        <article class="card">
+          <div class="card-header">
+            <h2>A’zolik arizalari</h2>
+            <span class="badge badge-warning" id="leaderPendingCount">0 kutilmoqda</span>
+          </div>
+          <div id="leaderApplicationsList" class="stack-sm"></div>
+        </article>
+
+        <!-- Tadbir sig'imini boshqarish -->
+        <article class="card">
+          <div class="card-header">
+            <h2>Tadbir sig‘imini boshqarish</h2>
+            <span class="badge badge-info">Avto-taklif yoqilgan</span>
+          </div>
+          <div id="leaderCapacityList" class="stack-sm"></div>
+        </article>
+
+        <!-- Davomat (Keldi) -->
+        <article class="card">
+          <div class="card-header">
+            <h2>Davomatni qayd etish (“Keldi”)</h2>
+            <span class="badge badge-success" id="attendanceSummaryBadge">0 / 0 keldi</span>
+          </div>
+          <div class="form-group">
+            <label for="attendanceEventSelect">Tadbirni tanlang</label>
+            <select id="attendanceEventSelect" class="input"></select>
+          </div>
+          <div id="leaderAttendanceList" class="stack-sm"></div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span>CampusClubs Portal • Cyber University DIK1305 (P08)</span>
+      <span>HTML5 • CSS3 Dark Mode • Vanilla JS ES Modules • localStorage</span>
+    </div>
+  </footer>
+
+  <!-- Natija modali (muhim QABUL / RAD ETISH / OFFERED holatlarida tezkor ko'rsatish uchun) -->
+  <div id="resultModalBackdrop" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card" id="resultModalCard"></div>
+  </div>
+
+  <script type="module" src="./src/app.js"></script>
+</body>
+</html>
