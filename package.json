@@ -1,0 +1,17 @@
+{
+  "name": "campusclubs-portal-p08",
+  "version": "1.0.0",
+  "description": "Cyber University DIK1305 — P08: Talabalar klublari va tadbirlar portali (CampusClubs Portal)",
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "cyber-university",
+    "dik1305",
+    "p08",
+    "campus-clubs",
+    "vanilla-js"
+  ],
+  "license": "MIT"
+}
